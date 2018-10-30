@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { addReminder } from '../actions';
+import PropTypes from 'prop-types';
+import moment from 'moment';
 
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: ''
+      text: '',
+      dueDate:''
     }
   }
   addRemind() {
-    this.props.addReminder(this.state.text);
+    this.props.addReminder(this.state.text, this.state.dueDate);
+    this.setState({
+      text: ''
+    })
   }
   renderReminders() {
     const { remidners } = this.props
@@ -24,7 +30,7 @@ class App extends Component {
               <li className="list-group-item" key={reminder.id}>
                 <div className="list-item">
                   <div>{reminder.text}</div>
-                  <div><em>time</em></div>
+                  <div><em>{moment(new Date(reminder.time)).fromNow() }</em></div>
                 </div>
               </li>
             )
@@ -41,9 +47,14 @@ class App extends Component {
           <div className="form-group mr-2">
             <input
               type="text"
-              className="form-control"
+              className="form-control mr-2"
               placeholder="I have to..."
               onChange={event => this.setState({ text: event.target.value })}
+            />
+            <input
+              type="datetime-local"
+              className="form-control"
+              onChange={event => this.setState({ dueDate: event.target.value })}
             />
           </div>
           <button
@@ -58,6 +69,10 @@ class App extends Component {
   }
 }
 
+App.propTypes = {
+  remidners: PropTypes.array.isRequired,
+  addReminder: PropTypes.func.isRequired
+};
 const mapStateToProps = (state) => {
   // console.log(state);
   // 把state给this.props的remidners
