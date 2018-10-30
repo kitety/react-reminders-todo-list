@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { addReminder } from '../actions';
+import { addReminder, deleteReminder, clearReminders } from '../actions';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
@@ -10,14 +10,17 @@ class App extends Component {
     super(props);
     this.state = {
       text: '',
-      dueDate:''
+      dueDate: ''
     }
   }
   addRemind() {
     this.props.addReminder(this.state.text, this.state.dueDate);
-    this.setState({
-      text: ''
-    })
+  }
+  deleteReminder(id) {
+    this.props.deleteReminder(id);
+  }
+  clearReminders() {
+    this.props.clearReminders()
   }
   renderReminders() {
     const { remidners } = this.props
@@ -30,8 +33,9 @@ class App extends Component {
               <li className="list-group-item" key={reminder.id}>
                 <div className="list-item">
                   <div>{reminder.text}</div>
-                  <div><em>{moment(new Date(reminder.time)).fromNow() }</em></div>
+                  <div><em>{moment(new Date(reminder.time)).fromNow()}</em></div>
                 </div>
+                <div className="list-item delete-button" onClick={() => this.deleteReminder(reminder.id)}>&#x2715;</div>
               </li>
             )
           })
@@ -64,6 +68,7 @@ class App extends Component {
           > Add Reminder</button>
         </div>
         {this.renderReminders()}
+        <div className="btn btn-danger mt-3" onClick={() => this.clearReminders()}>Clear Reminders</div>
       </div>
     );
   }
@@ -71,7 +76,9 @@ class App extends Component {
 
 App.propTypes = {
   remidners: PropTypes.array.isRequired,
-  addReminder: PropTypes.func.isRequired
+  addReminder: PropTypes.func.isRequired,
+  clearReminders: PropTypes.func.isRequired,
+  deleteReminder: PropTypes.func.isRequired
 };
 const mapStateToProps = (state) => {
   // console.log(state);
@@ -81,4 +88,5 @@ const mapStateToProps = (state) => {
     remidners: state
   }
 }
-export default connect(mapStateToProps, { addReminder })(App);
+// 一定要传,不传不生效
+export default connect(mapStateToProps, { addReminder, deleteReminder, clearReminders })(App);

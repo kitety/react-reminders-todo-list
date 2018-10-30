@@ -1,4 +1,4 @@
-import { ADD_REMINDER } from '../constants.js';
+import { ADD_REMINDER, DELETE_REMINDER, CLEAR_REMINDER } from '../constants.js';
 
 const reminder = (action) => {
   const { text, dueDate } = action;
@@ -16,6 +16,10 @@ const reminders = (state = [], action = {}) => {
         ...state,
         reminder(action)
       ]
+    case DELETE_REMINDER:
+      return state.filter(ele => ele.id !== action.id)
+    case CLEAR_REMINDER:
+     return []
     default:
       return state;
   }
